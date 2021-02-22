@@ -1,6 +1,14 @@
 ## Importador de Contactos
 
 Esta aplicacion está desarrollada en Laravel, con base de datos en MySQL con el objetivo de cumplir prueba técnica para Koombea, con las especificaciones descritas en el documento ubicado en la raíz Prueba_Tecnica.pdf. 
+
+## Demo
+#### http://import-contacts-brebatista.herokuapp.com/
+```sh
+user:     usertest@test.com
+password: koombea
+```
+
 ## Instalación
 
 - Clonar el repositorio y dentro de la carpeta del proyecto ejecutar:
