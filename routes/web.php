@@ -12,9 +12,16 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return Redirect::route('login');
 });
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+//  Rutas para manejo de archivos
+Route::post('load_file', 'FilesController@UploadFile')->name('load_file');
+Route::get('import/{id_file}', 'FilesController@importFile')->name('import');
+Route::get('delete_file/{id_file}', 'FilesController@deleteFile')->name('delete_file');
+
+//Route::get('/delete/{id}', ['modulo' => '3', 'accion' => 'borrar','as' => 'delete', 'uses' => 'Documentos\DocumentosController@getDelete']);
