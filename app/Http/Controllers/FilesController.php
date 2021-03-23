@@ -45,18 +45,19 @@ class FilesController extends Controller
             return redirect('/home')->with('error', 'Ya se encuentra cargado este archivo.');
         }
 
+        $location = Auth::user()->id."/".$filename;
         //  Guardamos el archivo
-        \Storage::disk('local')->put(Auth::user()->id."/".$filename,  \File::get($file));
+        \Storage::disk('local')->put($location,  \File::get($file));
     
         //  Preparamos la data para guardar en la tabla files
         $data['user_id']= Auth::user()->id;
         $data['filename'] = $filename;
-        $data['location']= Auth::user()->id.'/'.$filename;
+        $data['location']= $location;
         
         //  Creamos el registro en la base de datos
-        $this->createFile($data);
+        $file = $this->createFile($data);
 
-        return redirect('/home')->with('status', 'Se subió el archivo satisfactoriamente.');
+        return redirect('/home')->with('status', 'Se subió el archivo satisfactoriamente.')->with('file', $file);
     }
 
      /**
@@ -120,8 +121,8 @@ class FilesController extends Controller
      */
     public function importFile($id_file){
         $file = File::find($id_file); 
-        $locationFile = storage_path("app")."/".$file->location;
         if ($file) {
+            $locationFile = storage_path("app")."/".$file->location;
             if (Storage::disk('local')->exists($file->location)) {
                 try {
                     $import = new ContactsImport;
@@ -143,7 +144,7 @@ class FilesController extends Controller
                         }
                     } else {
                         $errors = $import->getErrors();
-                        return redirect('/home')->with('error_c', 'Ha ocurrido un error durante la importación: '. json_encode($errors));
+                        return redirect('/home')->with('error_c', 'Ha ocurrido un error durante la importación 1: '. json_encode($errors));
                     }
                     
                 } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
@@ -158,10 +159,14 @@ class FilesController extends Controller
                         $failure->values(); // The values of the row that has failed.
                     }
                     $this->updateStatusFile($id_file, 'Fallido');
-                    return redirect('/home')->with('error_c', 'Ha ocurrido un error durante la importación.')->with('errors', $failure->errors());
+                    return redirect('/home')->with('error_c', 'Ha ocurrido un error durante la importación 2.')->with('errors', $failure->errors());
                 } 
                 
+            } else {
+                return redirect('/home')->with('error_c', 'El archivo no ha sido encontrado.');
             }
+        } else {
+            return redirect('/home')->with('error_c', 'El archivo no existe.');
         }
        
     }
